@@ -1,0 +1,174 @@
+{
+    "name": "test_guide_pytest_json",
+    "timestamp": 1743809971395,
+    "testcases": [
+        {
+            "@type": "testcasefolder",
+            "name": "sub_chicken/sub_rooster",
+            "testcases": [
+                {
+                    "@type": "testcase",
+                    "name": "test_rooster.py::test_rooster_drives",
+                    "verdict": "PASSED",
+                    "timestamp": 1743809971395,
+                    "executionTime": 0,
+                    "artifacts": [],
+                    "constants": [
+                        {
+                            "key": "ECU",
+                            "value": "bms"
+                        },
+                        {
+                            "key": "Release_Version_Major",
+                            "value": "7"
+                        },
+                        {
+                            "key": "Release_Version_Minor",
+                            "value": "17"
+                        },
+                        {
+                            "key": "Release_Version_Subminor",
+                            "value": "9"
+                        }
+                    ]
+                },
+                {
+                    "@type": "testcase",
+                    "name": "test_rooster.py::test_rooster_walks",
+                    "verdict": "PASSED",
+                    "timestamp": 1743809971395,
+                    "executionTime": 0,
+                    "artifacts": [],
+                    "constants": [
+                        {
+                            "key": "ECU",
+                            "value": "bms"
+                        },
+                        {
+                            "key": "Release_Version_Major",
+                            "value": "7"
+                        },
+                        {
+                            "key": "Release_Version_Minor",
+                            "value": "17"
+                        },
+                        {
+                            "key": "Release_Version_Subminor",
+                            "value": "9"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "@type": "testcasefolder",
+            "name": "sub_chicken",
+            "testcases": [
+                {
+                    "@type": "testcase",
+                    "name": "test_chicken.py::test_chicken_talks",
+                    "verdict": "PASSED",
+                    "timestamp": 1743809971395,
+                    "executionTime": 0,
+                    "artifacts": [],
+                    "constants": [
+                        {
+                            "key": "ECU",
+                            "value": "bms"
+                        },
+                        {
+                            "key": "Release_Version_Major",
+                            "value": "7"
+                        },
+                        {
+                            "key": "Release_Version_Minor",
+                            "value": "17"
+                        },
+                        {
+                            "key": "Release_Version_Subminor",
+                            "value": "9"
+                        }
+                    ]
+                },
+                {
+                    "@type": "testcase",
+                    "name": "test_chicken.py::test_chicken_flies",
+                    "verdict": "FAILED",
+                    "timestamp": 1743809971395,
+                    "executionTime": 0,
+                    "artifacts": [],
+                    "constants": [
+                        {
+                            "key": "ECU",
+                            "value": "bms"
+                        },
+                        {
+                            "key": "Release_Version_Major",
+                            "value": "7"
+                        },
+                        {
+                            "key": "Release_Version_Minor",
+                            "value": "17"
+                        },
+                        {
+                            "key": "Release_Version_Subminor",
+                            "value": "9"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "@type": "testcase",
+            "name": "test_egg.py::test_egg_hatch",
+            "verdict": "PASSED",
+            "timestamp": 1743809971395,
+            "executionTime": 0,
+            "artifacts": [],
+            "constants": [
+                {
+                    "key": "ECU",
+                    "value": "bms"
+                },
+                {
+                    "key": "Release_Version_Major",
+                    "value": "7"
+                },
+                {
+                    "key": "Release_Version_Minor",
+                    "value": "17"
+                },
+                {
+                    "key": "Release_Version_Subminor",
+                    "value": "9"
+                }
+            ]
+        },
+        {
+            "@type": "testcase",
+            "name": "test_egg.py::test_egg_before_chicken",
+            "verdict": "FAILED",
+            "timestamp": 1743809971395,
+            "executionTime": 0,
+            "artifacts": [],
+            "constants": [
+                {
+                    "key": "ECU",
+                    "value": "bms"
+                },
+                {
+                    "key": "Release_Version_Major",
+                    "value": "7"
+                },
+                {
+                    "key": "Release_Version_Minor",
+                    "value": "17"
+                },
+                {
+                    "key": "Release_Version_Subminor",
+                    "value": "9"
+                }
+            ]
+        }
+    ]
+}

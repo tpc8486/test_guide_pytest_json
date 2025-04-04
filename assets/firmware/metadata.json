@@ -1,0 +1,12 @@
+{
+  "ECUModel": {
+    "ComponentId": "bms",
+    "UsageID": "0",
+    "AssemblyID": "0",
+    "PCBID": "0"
+  },
+  "Index": "0",
+  "Version": "7.17.9",
+  "StartAddress": "0",
+  "Custom": "7.17.9"
+}
