@@ -171,10 +171,33 @@ class JSONReport:
                 )
 
     def pytest_sessionfinish(self, session):
+        def clean_name(name):
+            # Remove 'test_' from file name and function name if present
+            if "::" in name:
+                file_part, func_part = name.split("::")
+                file_base = os.path.basename(file_part)
+                folder = os.path.dirname(file_part)
+
+                if file_base.startswith("test_"):
+                    file_base = file_base.replace("test_", "", 1)
+                if func_part.startswith("test_"):
+                    func_part = func_part.replace("test_", "", 1)
+
+                file_part_cleaned = os.path.join(folder, file_base).replace("\\", "/")
+                return f"{file_part_cleaned}::{func_part}"
+            return name.replace("test_", "", 1)
+
         testcases_output = []
 
         for key, data in self.logged_tests.items():
-            testcases_output.append(data)
+            if data["@type"] == "testcasefolder":
+                for t in data["testcases"]:
+                    t["name"] = clean_name(t["name"])
+                data["name"] = clean_name(data["name"])
+                testcases_output.append(data)
+            else:
+                data["name"] = clean_name(data["name"])
+                testcases_output.append(data)
 
         report = {
             "name": self.project_name,
