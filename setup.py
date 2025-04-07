@@ -10,6 +10,16 @@ setup(
     packages=['pytest_json'],
     install_requires=['pytest'],
     python_requires='>=3.10',
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Framework :: Pytest',
+        'Operating System :: OS Independent',
+    ],
     entry_points={
         'pytest11': [
             'json = pytest_json.plugin',
