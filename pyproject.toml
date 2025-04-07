@@ -1,8 +1,8 @@
 [project]
 name = "test_guide_pytest_json"
-version = "0.0.2"
+version = "0.0.3"
 authors = [{name="Tim Copeland"}]
-description='A pytest plugin to generate JSON reports, with ATX support.',
+description='A pytest plugin to generate JSON reports, with ATX support.'
 readme = "README.md"
 requires-python = ">=3.10"
 classifiers = [
