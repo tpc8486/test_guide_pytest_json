@@ -18,3 +18,23 @@ This package bridges that gap by:
 - Generates test.guide-compatible JSON reports
 - Captures test case hierarchy, verdicts (`PASSED`, `FAILED`, `ERROR`, `INCONCLUSIVE`, etc.), durations, and more
 - Supports nested folder/test structures to reflect logical grouping in test.guide
+
+## 🧪 Example Usage
+
+1. Install the package:
+
+```bash
+pip install test-guide-pytest-json
+```
+
+2. Run your `pytest` tests with the `--json-report` option:
+
+```bash
+pytest --json=report.json
+```
+
+3. Point to a directory containing your tests:
+
+```bash
+pytest .\tests\ --json=report.json
+```

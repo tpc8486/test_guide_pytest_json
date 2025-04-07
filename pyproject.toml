@@ -21,4 +21,4 @@ license-files = ["LICEN[CS]E*"]
 include = ["tg_pytest_json"]
 
 [project.entry-points."pytest11"]
-tg_pytest_json = "tg_pytest_json:plugin"
+tg_pytest_json = "tg_pytest_json.plugin"
