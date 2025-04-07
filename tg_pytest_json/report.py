@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import time
 
 
@@ -9,8 +10,13 @@ def pytest_sessionstart(session):
 
 
 def find_project_root():
-    """Find the project root by looking for a known project marker."""
-    current_path = os.path.abspath(__file__)
+    """Find the project root by looking for a known project marker and checking for a virtual environment."""
+    # Check if in a virtual environment (looking for 'site-packages' in the path)
+    if 'site-packages' in sys.path[0]:
+        venv_root = os.path.dirname(os.path.dirname(sys.path[0]))  # Parent of virtual environment
+        current_path = venv_root
+    else:
+        current_path = os.path.abspath(__file__)
 
     while current_path:
         parent = os.path.dirname(current_path)
@@ -26,11 +32,12 @@ def find_project_root():
 
         current_path = parent  # Move up a level
 
-    return os.path.basename(os.path.dirname(os.path.abspath(__file__)))  # Fallback
+    # Fallback if no markers are found
+    return os.path.basename(os.path.dirname(os.path.abspath(__file__)))
 
 
 class JSONReport:
-    def __init__(self, json_path, project_name="Test-Suite"):
+    def __init__(self, json_path):
         self.json_path = os.path.abspath(
             os.path.expanduser(os.path.expandvars(json_path))
         )
@@ -53,9 +60,12 @@ class JSONReport:
         return "ERROR"
 
     def _load_constants(self):
-        metadata_path = os.path.join(
-            os.path.dirname(__file__), "..", "assets", "firmware", "metadata.json"
-        )
+        # Use find_project_root to find the root of the project
+        project_root = find_project_root()
+
+        # Set the path to metadata.json relative to the project root
+        metadata_path = os.path.join(project_root, "assets", "firmware", "metadata.json")
+
         try:
             with open(os.path.abspath(metadata_path), "r", encoding="utf-8") as f:
                 data = json.load(f)
@@ -170,41 +180,102 @@ class JSONReport:
                     {"key": metadata.get("key", ""), "value": metadata.get("value", "")}
                 )
 
+    def _insert_testcase_into_tree(self, path_parts, testcase_data):
+        current_level = self.logged_tests
+
+        for part in path_parts[:-1]:  # For all but last, create testcasefolder nodes
+            if "children" not in current_level:
+                current_level["children"] = {}
+
+            if part not in current_level["children"]:
+                current_level["children"][part] = {
+                    "@type": "testcasefolder",
+                    "name": part,
+                    "testcases": [],
+                }
+
+            current_level = current_level["children"][part]
+
+        # Insert the testcase at the correct level
+        current_level["testcases"].append(testcase_data)
+
+    def _make_testcase_dict(self, report):
+        verdict = self._get_outcome(report)
+        exec_time = int(getattr(report, "duration", 0.0) * 1000)
+        timestamp = self.timestamp
+        artifacts = getattr(report, "artifacts", [])
+
+        test_type, folder_name, test_name = self._get_test_metadata(report)
+
+        testcase_data = {
+            "@type": "testcase",
+            "name": test_name,
+            "verdict": verdict,
+            "timestamp": timestamp,
+            "executionTime": exec_time,
+            "artifacts": artifacts,
+            "constants": self.constants,
+        }
+
+        if folder_name:
+            path_parts = folder_name.strip("/").split("/")
+            self._insert_testcase_into_tree(path_parts + [test_name], testcase_data)
+        else:
+            self.testcases.append(testcase_data)
+
+    def _flatten_tree(self, node):
+        """Recursively convert the nested tree into the schema format."""
+        if "children" not in node:
+            return []
+
+        flattened = []
+        for folder_name, child in node["children"].items():
+            subfolders = self._flatten_tree(child)
+            folder_entry = {
+                "@type": "testcasefolder",
+                "name": folder_name,
+                "testcases": child["testcases"] + subfolders,
+            }
+            flattened.append(folder_entry)
+        return flattened
+
+    def _clean_testcase_names(self, entries):
+        """Recursively clean testcase and folder names."""
+        for entry in entries:
+            if entry["@type"] == "testcasefolder":
+                entry["name"] = self._clean_folder_name(entry["name"])
+                self._clean_testcase_names(entry["testcases"])
+            elif entry["@type"] == "testcase":
+                entry["name"] = self._clean_testcase_name(entry["name"])
+
+    def _clean_testcase_name(self, name):
+        # Handle format like: test_chicken.py::test_chicken_talks
+        if "::" in name:
+            file_part, func_part = name.split("::", 1)
+            file_part = os.path.splitext(os.path.basename(file_part))[0]  # remove .py
+            file_part = file_part.removeprefix("test_")  # remove test_ from filename
+            func_part = func_part.removeprefix("test_") # remove test_ from function name
+            return f"{file_part}__{func_part}"
+        else:
+            # fallback for single names (legacy)
+            return name.removeprefix("test_")
+
+    def _clean_folder_name(self, name):
+        # Remove 'test_' prefix if present and clean path parts
+        return name.replace("test_", "").replace(".py", "")
+
+
+
     def pytest_sessionfinish(self, session):
-        def clean_name(name):
-            # Remove 'test_' from file name and function name if present
-            if "::" in name:
-                file_part, func_part = name.split("::")
-                file_base = os.path.basename(file_part)
-                folder = os.path.dirname(file_part)
+        nested_folders = self._flatten_tree(self.logged_tests)
+        testcases_output = nested_folders + self.testcases
 
-                if file_base.startswith("test_"):
-                    file_base = file_base.replace("test_", "", 1)
-                if func_part.startswith("test_"):
-                    func_part = func_part.replace("test_", "", 1)
-
-                file_part_cleaned = os.path.join(folder, file_base).replace("\\", "/")
-                return f"{file_part_cleaned}::{func_part}"
-            return name.replace("test_", "", 1)
-
-        testcases_output = []
-
-        for key, data in self.logged_tests.items():
-            if data["@type"] == "testcasefolder":
-                for t in data["testcases"]:
-                    t["name"] = clean_name(t["name"])
-                data["name"] = clean_name(data["name"])
-                testcases_output.append(data)
-            else:
-                data["name"] = clean_name(data["name"])
-                testcases_output.append(data)
+        self._clean_testcase_names(testcases_output)
 
         report = {
             "name": self.project_name,
             "timestamp": self.timestamp,
             "testcases": testcases_output,
-            # "constants": self.constants,
-            # "documentData": self.document_data
         }
 
         os.makedirs(os.path.dirname(self.json_path), exist_ok=True)

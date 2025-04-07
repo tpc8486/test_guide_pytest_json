@@ -1,4 +1,4 @@
-## pytest-testguide-json
+## pytest-test-guide-json
 
 A Python package to convert `pytest` test results into a **JSON format compatible with [test.guide](https://www.tracetronic.com/products/testguide/)** by TraceTronic.
 
