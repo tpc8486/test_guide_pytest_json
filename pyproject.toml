@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "test_guide_pytest_json"
-version = "0.0.4"
+version = "0.0.5"
 dependencies = []
 authors = [{name="Tim Copeland"}]
 description='A pytest plugin to generate JSON reports, with ATX support.'

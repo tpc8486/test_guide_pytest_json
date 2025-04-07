@@ -20,7 +20,7 @@ def find_project_root():
             break
 
         # Check for common project markers
-        for marker in ['pyproject.toml', 'setup.py', '.git']:
+        for marker in ["pyproject.toml", "setup.py", ".git"]:
             if os.path.exists(os.path.join(parent, marker)):
                 return os.path.basename(parent)
 
@@ -31,7 +31,9 @@ def find_project_root():
 
 class JSONReport:
     def __init__(self, json_path, project_name="Test-Suite"):
-        self.json_path = os.path.abspath(os.path.expanduser(os.path.expandvars(json_path)))
+        self.json_path = os.path.abspath(
+            os.path.expanduser(os.path.expandvars(json_path))
+        )
         self.testcases = []
         self.testcase_folders = []
         self.document_data = {}
@@ -51,7 +53,9 @@ class JSONReport:
         return "ERROR"
 
     def _load_constants(self):
-        metadata_path = os.path.join(os.path.dirname(__file__), "..", "assets", "firmware", "metadata.json")
+        metadata_path = os.path.join(
+            os.path.dirname(__file__), "..", "assets", "firmware", "metadata.json"
+        )
         try:
             with open(os.path.abspath(metadata_path), "r", encoding="utf-8") as f:
                 data = json.load(f)
@@ -71,7 +75,12 @@ class JSONReport:
                 ]
         except Exception as e:
             print(f"Warning: Failed to load metadata.json constants: {e}")
-            return []
+            return [
+                {"key": "ECU", "value": "Unknown"},
+                {"key": "Release_Version_Major", "value": "Unknown"},
+                {"key": "Release_Version_Minor", "value": "Unknown"},
+                {"key": "Release_Version_Subminor", "value": "Unknown"},
+            ]
 
     def _scan_test_structure(self, base="tests"):
         self.test_structure = set()
@@ -80,7 +89,9 @@ class JSONReport:
         for root, _, files in os.walk(base_path):
             for file in files:
                 if file.startswith("test_") and file.endswith(".py"):
-                    rel_path = os.path.relpath(os.path.join(root, file), base_path).replace("\\", "/")
+                    rel_path = os.path.relpath(
+                        os.path.join(root, file), base_path
+                    ).replace("\\", "/")
                     self.test_structure.add(rel_path)
 
     def _get_test_metadata(self, report):
@@ -125,10 +136,12 @@ class JSONReport:
                 self.logged_tests[folder_name] = {
                     "@type": "testcasefolder",
                     "name": folder_name,
-                    "testcases": []
+                    "testcases": [],
                 }
             # Avoid duplicates
-            if test_name not in {t["name"] for t in self.logged_tests[folder_name]["testcases"]}:
+            if test_name not in {
+                t["name"] for t in self.logged_tests[folder_name]["testcases"]
+            }:
                 self.logged_tests[folder_name]["testcases"].append(testcase_data)
         else:
             if test_name not in self.logged_tests:
@@ -153,10 +166,9 @@ class JSONReport:
         # Add metadata if available
         if hasattr(report, "test_metadata"):
             for metadata in report.test_metadata:
-                testcase_dict.setdefault("attributes", []).append({
-                    "key": metadata.get("key", ""),
-                    "value": metadata.get("value", "")
-                })
+                testcase_dict.setdefault("attributes", []).append(
+                    {"key": metadata.get("key", ""), "value": metadata.get("value", "")}
+                )
 
     def pytest_sessionfinish(self, session):
         testcases_output = []

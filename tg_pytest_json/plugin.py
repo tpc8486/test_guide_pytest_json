@@ -2,7 +2,6 @@ import pytest
 from tg_pytest_json.report import JSONReport
 
 
-
 def pytest_addoption(parser):
     """Add command-line and ini options for JSON reporting."""
     group = parser.getgroup("terminal reporting")
@@ -14,17 +13,6 @@ def pytest_addoption(parser):
         help="Where to store the JSON report",
     )
     parser.addini("json_report", "Where to store the JSON report")
-
-
-# @pytest.fixture(scope="session", autouse=True)
-# def json_environment(request):
-#     """Provide environment details for the JSON report."""
-#     request.config._json_environment.extend(
-#         [
-#             ("Python", platform.python_version()),
-#             ("Platform", platform.platform()),
-#         ]
-#     )
 
 
 def _json_path(config):
