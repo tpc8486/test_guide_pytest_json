@@ -1,40 +1,42 @@
-# pytest-testguide-json
+## pytest-testguide-json
 
-A Python integration package to convert `pytest` test results into a **JSON format compatible with [test.guide](https://www.tracetronic.com/products/testguide/)** by TraceTronic.
+A Python package to convert `pytest` test results into a **JSON format compatible with [test.guide](https://www.tracetronic.com/products/testguide/)** by TraceTronic.
 
 ## 📘 Overview
 
-TraceTronic's **test.guide** is a powerful platform for managing and analyzing test results. While it natively supports several tools and formats, it does **not currently support `pytest`** out of the box.
+**test.guide** by TraceTronic is a powerful tool for managing and analyzing automated test results. However, it does **not natively support `pytest`** output.
 
-This package bridges that gap by:
+This package bridges the gap by:
 
 - Collecting test results from `pytest`
 - Converting them into a structured JSON format
-- Ensuring full compatibility with test.guide's expected JSON schema
+- Ensuring full compatibility with test.guide’s expected JSON schema
 
 ## 🚀 Features
 
-- Plug-and-play with existing `pytest` suites
+- Easy integration with existing `pytest` test suites
 - Generates test.guide-compatible JSON reports
 - Captures test case hierarchy, verdicts (`PASSED`, `FAILED`, `ERROR`, `INCONCLUSIVE`, etc.), durations, and more
-- Supports nested folder/test structures to reflect logical grouping in test.guide
+- Supports nested folder/test structures for proper grouping in test.guide
 
 ## 🧪 Example Usage
 
-1. Install the package:
-
+1. **Install the package**:
 ```bash
 pip install test-guide-pytest-json
 ```
 
-2. Run your `pytest` tests with the `--json-report` option:
-
+2. Run your tests with the JSON report option:
 ```bash
-pytest --json=report.json
-```
+# Timestamped file in default path with specific tests
+pytest ./tests/ --json
 
-3. Point to a directory containing your tests:
+# Custom path
+pytest --json some/path/report.json
 
-```bash
-pytest .\tests\ --json=report.json
+# Timestamped file in project root
+pytest --json
+
+# No JSON report (unless specified in pytest.ini)
+pytest
 ```
