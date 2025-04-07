@@ -1,3 +1,22 @@
+[project]
+name = "test_guide_pytest_json"
+version = "0.0.2"
+authors = [{name="Tim Copeland"}]
+description='A pytest plugin to generate JSON reports, with ATX support.',
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+
+[project.entry-points]
+pytest = [
+    "tg_pytest_json = tg_pytest_json:plugin",
+]
+
 [build-system]
 requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
