@@ -1,4 +1,6 @@
 import pytest
+import os
+from datetime import datetime
 from tg_pytest_json.report import JSONReport
 
 
@@ -7,17 +9,29 @@ def pytest_addoption(parser):
     group = parser.getgroup("terminal reporting")
     group.addoption(
         "--json",
-        action="store",
+        nargs="?",  # Allow optional argument
         dest="json_path",
-        default=None,
-        help="Where to store the JSON report",
+        const="",   # Default to empty string if no value is provided
+        help="Where to store the JSON report (optional). If omitted, a timestamped report will be created at the project root.",
     )
     parser.addini("json_report", "Where to store the JSON report")
 
 
 def _json_path(config):
     """Determine the JSON report path from CLI option or ini setting."""
-    return config.option.json_path or config.getini("json_report") or None
+    cli_path = config.option.json_path
+    ini_path = config.getini("json_report")
+
+    if cli_path:
+        return cli_path
+    if ini_path:
+        return ini_path
+
+    # Auto-generate filename at project root
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+    filename = f"{timestamp}_report.json"
+    root_dir = config.rootpath if hasattr(config, "rootpath") else os.getcwd()
+    return os.path.join(str(root_dir), filename)
 
 
 @pytest.fixture
