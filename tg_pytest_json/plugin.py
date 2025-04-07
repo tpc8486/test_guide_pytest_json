@@ -5,16 +5,33 @@ from tg_pytest_json.report import JSONReport
 
 
 def pytest_addoption(parser):
-    """Add command-line and ini options for JSON reporting."""
+    """Add command-line and ini options for JSON reporting and custom project details."""
     group = parser.getgroup("terminal reporting")
     group.addoption(
         "--json",
         nargs="?",  # Allow optional argument
         dest="json_path",
-        const="",   # Default to empty string if no value is provided
+        const="",  # Default to empty string if no value is provided
         help="Where to store the JSON report (optional). If omitted, a timestamped report will be created at the project root.",
     )
     parser.addini("json_report", "Where to store the JSON report")
+
+    # Add options for project details
+    group.addoption(
+        "--project-name",
+        required=True,
+        help="The name of the project"
+    )
+    group.addoption(
+        "--ecu-name",
+        required=True,
+        help="The name of the ECU"
+    )
+    group.addoption(
+        "--ecu-version",
+        required=True,
+        help="The version of the ECU"
+    )
 
 
 def _json_path(config):
@@ -41,9 +58,24 @@ def json_report_path(request):
 
 
 def pytest_configure(config):
-    """Configure pytest for JSON reporting."""
+    """Configure pytest for JSON reporting and capture project details."""
     config._json_environment = []
     json_path = _json_path(config)
+
+    # Capture the custom project details
+    project_name = config.option.project_name
+    ecu_name = config.option.ecu_name
+    ecu_version = config.option.ecu_version
+
+    # Print or store the collected information
+    print(f"Project: {project_name}, ECU: {ecu_name}, Version: {ecu_version}")
+
+    # You can store these details in the report or other places if needed
+    config._json_environment.append({
+        "project_name": project_name,
+        "ecu_name": ecu_name,
+        "ecu_version": ecu_version
+    })
 
     if json_path and not hasattr(config, "workerinput"):
         config._json = JSONReport(json_path)
