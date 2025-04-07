@@ -1,5 +1,5 @@
 import pytest
-from pytest_json.report import JSONReport
+from tg_pytest_json.report import JSONReport
 
 
 
