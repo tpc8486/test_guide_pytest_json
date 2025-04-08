@@ -3,7 +3,6 @@ import os
 from datetime import datetime
 from tg_pytest_json.report import JSONReport
 
-
 def pytest_addoption(parser):
     """Add command-line and ini options for JSON reporting and custom project details."""
     group = parser.getgroup("terminal reporting")
@@ -33,7 +32,6 @@ def pytest_addoption(parser):
         help="The version of the ECU"
     )
 
-
 def _json_path(config):
     """Determine the JSON report path from CLI option or ini setting."""
     cli_path = config.option.json_path
@@ -50,12 +48,10 @@ def _json_path(config):
     root_dir = config.rootpath if hasattr(config, "rootpath") else os.getcwd()
     return os.path.join(str(root_dir), filename)
 
-
 @pytest.fixture
 def json_report_path(request):
     """Fixture to provide the JSON report path."""
     return _json_path(request.config)
-
 
 def pytest_configure(config):
     """Configure pytest for JSON reporting and capture project details."""
@@ -78,19 +74,17 @@ def pytest_configure(config):
     })
 
     if json_path and not hasattr(config, "workerinput"):
-        config._json = JSONReport(json_path)
+        config._json = JSONReport(json_path, project_name, ecu_name, ecu_version)
         config.pluginmanager.register(config._json)
 
     if hasattr(config, "workeroutput"):
         config.workeroutput["json_environment"] = config._json_environment
-
 
 @pytest.mark.optionalhook
 def pytest_testnodedown(node):
     """Handle distributed testing (xdist)."""
     if hasattr(node, "workeroutput"):
         node.config._json_environment = node.workeroutput["json_environment"]
-
 
 def pytest_unconfigure(config):
     """Unregister the JSON report plugin on pytest exit."""

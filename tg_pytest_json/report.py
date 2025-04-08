@@ -1,6 +1,5 @@
 import json
 import os
-import sys
 import time
 
 
@@ -9,35 +8,9 @@ def pytest_sessionstart(session):
     session.config._json._scan_test_structure("tests")
 
 
-def find_project_root():
-    """Find the project root by looking for a known project marker and checking for a virtual environment."""
-    # Check if in a virtual environment (looking for 'site-packages' in the path)
-    if 'site-packages' in sys.path[0]:
-        venv_root = os.path.dirname(os.path.dirname(sys.path[0]))  # Parent of virtual environment
-        current_path = venv_root
-    else:
-        current_path = os.path.abspath(__file__)
-
-    while current_path:
-        parent = os.path.dirname(current_path)
-
-        # Check if we hit the filesystem root
-        if parent == current_path:
-            break
-
-        # Check for common project markers
-        for marker in ["pyproject.toml", "setup.py", ".git"]:
-            if os.path.exists(os.path.join(parent, marker)):
-                return os.path.basename(parent)
-
-        current_path = parent  # Move up a level
-
-    # Fallback if no markers are found
-    return os.path.basename(os.path.dirname(os.path.abspath(__file__)))
-
 
 class JSONReport:
-    def __init__(self, json_path):
+    def __init__(self, json_path, project_name, ecu_name, ecu_version):
         self.json_path = os.path.abspath(
             os.path.expanduser(os.path.expandvars(json_path))
         )
@@ -47,8 +20,8 @@ class JSONReport:
         self.run_index = 0
         self.timestamp = int(time.time() * 1000)
         self.logged_tests = {}
-        self.project_name = find_project_root()
-        self.constants = self._load_constants()
+        self.project_name = project_name
+        self.constants = self._load_constants(ecu_name, ecu_version)
 
     def _get_outcome(self, report):
         if report.failed:
@@ -59,30 +32,21 @@ class JSONReport:
             return "PASSED"
         return "ERROR"
 
-    def _load_constants(self):
-        # Use find_project_root to find the root of the project
-        project_root = find_project_root()
-
-        # Set the path to metadata.json relative to the project root
-        metadata_path = os.path.join(project_root, "assets", "firmware", "metadata.json")
-
+    def _load_constants(self, ecu_name, ecu_version):
         try:
-            with open(os.path.abspath(metadata_path), "r", encoding="utf-8") as f:
-                data = json.load(f)
-                component_id = data.get("ECUModel", {}).get("ComponentId", "")
-                version = data.get("Version", "")
-                version_parts = version.split(".")
+            version = ecu_version
+            version_parts = version.split(".")
 
-                major = version_parts[0] if len(version_parts) > 0 else ""
-                minor = version_parts[1] if len(version_parts) > 1 else ""
-                subminor = version_parts[2] if len(version_parts) > 2 else ""
+            major = version_parts[0] if len(version_parts) > 0 else ""
+            minor = version_parts[1] if len(version_parts) > 1 else ""
+            subminor = version_parts[2] if len(version_parts) > 2 else ""
 
-                return [
-                    {"key": "ECU", "value": component_id},
-                    {"key": "Release_Version_Major", "value": major},
-                    {"key": "Release_Version_Minor", "value": minor},
-                    {"key": "Release_Version_Subminor", "value": subminor},
-                ]
+            return [
+                {"key": "ECU", "value": ecu_name},
+                {"key": "Release_Version_Major", "value": major},
+                {"key": "Release_Version_Minor", "value": minor},
+                {"key": "Release_Version_Subminor", "value": subminor},
+            ]
         except Exception as e:
             print(f"Warning: Failed to load metadata.json constants: {e}")
             return [
@@ -255,7 +219,7 @@ class JSONReport:
             file_part = os.path.splitext(os.path.basename(file_part))[0]  # remove .py
             file_part = file_part.removeprefix("test_")  # remove test_ from filename
             func_part = func_part.removeprefix("test_") # remove test_ from function name
-            return f"{file_part}__{func_part}"
+            return f"{file_part}-{func_part}"
         else:
             # fallback for single names (legacy)
             return name.removeprefix("test_")
