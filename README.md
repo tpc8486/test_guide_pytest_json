@@ -29,10 +29,10 @@ pip install test-guide-pytest-json
 2. Run your tests with the JSON report option:
 
 The following items are now required when you call --json:
-- `--json` (or `-j`) - The path to the JSON report file. If not specified, a timestamped file will be created in the current working directory.
-- `--project-name` (or `-p`) - The name of the project
-- `--ecu-name` (or `-e`) - The name of the ECU
-- `--ecu-version` (or `-v`) - The version of the ECU
+- `--json` (or `-J`) - The path to the JSON report file. If not specified, a timestamped file will be created in the current working directory.
+- `--project-name` (or `-P`) - The name of the project
+- `--ecu-name` (or `-E`) - The name of the ECU
+- `--ecu-version` (or `-X`) - The version of the ECU
 
 ```bash
 # Timestamped file in default path with specific tests
@@ -45,7 +45,7 @@ pytest --json some/path/report.json
 pytest --json --project-name my_project --ecu-name my_ecu --ecu-version 0.0.1
 
 # Short options
-pytest -j some/path/report.json -p my_project -e my_ecu -v 0.0.1
+pytest -J some/path/report.json -P my_project -E my_ecu -X 0.0.1
 
 # No JSON report (unless specified in pytest.ini)
 pytest
