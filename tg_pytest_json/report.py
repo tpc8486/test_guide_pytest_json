@@ -44,7 +44,7 @@ class JSONReport:
                 {"key": "ECU", "value": ecu_name},
                 {"key": "Release_Version_Major", "value": major},
                 {"key": "Release_Version_Minor", "value": minor},
-                {"key": "Release_Version_Subminor", "value": subminor},
+                {"key": "Release_Version_SubMinor", "value": subminor},
             ]
         else:
             return [
