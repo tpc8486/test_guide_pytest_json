@@ -33,9 +33,8 @@ class JSONReport:
         return "ERROR"
 
     def _load_constants(self, ecu_name, ecu_version):
-        try:
-            version = ecu_version
-            version_parts = version.split(".")
+        if ecu_version:
+            version_parts = ecu_version.split(".")
 
             major = version_parts[0] if len(version_parts) > 0 else ""
             minor = version_parts[1] if len(version_parts) > 1 else ""
@@ -47,8 +46,7 @@ class JSONReport:
                 {"key": "Release_Version_Minor", "value": minor},
                 {"key": "Release_Version_Subminor", "value": subminor},
             ]
-        except Exception as e:
-            print(f"Warning: Failed to load metadata.json constants: {e}")
+        else:
             return [
                 {"key": "ECU", "value": "Unknown"},
                 {"key": "Release_Version_Major", "value": "Unknown"},
