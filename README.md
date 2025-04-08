@@ -25,28 +25,25 @@ This package bridges the gap by:
 ```bash
 pip install test-guide-pytest-json
 ```
+2. **Create a .env file in the root of your project to store metadata**:
+```env
+PROJECT_NAME=my_project
+ECU_NAME=my_ecu
+ECU_VERSION=0.0.1
+```
 
-2. Run your tests with the JSON report option:
-
-The following items are now required when you call --json:
-- `--json` (or `-J`) - The path to the JSON report file. If not specified, a timestamped file will be created in the current working directory.
-- `--project-name` (or `-P`) - The name of the project
-- `--ecu-name` (or `-E`) - The name of the ECU
-- `--ecu-version` (or `-X`) - The version of the ECU
-
+3. **Run your tests with pytest**:
 ```bash
-# Timestamped file in default path with specific tests
-pytest ./tests/ --json
+# Generate timestamped file in the project root
+pytest --json
 
-# Custom path
+# Generate report at a custom path
 pytest --json some/path/report.json
 
-# Timestamped file in project root
-pytest --json --project-name my_project --ecu-name my_ecu --ecu-version 0.0.1
+# Short option
+pytest -J some/path/report.json
 
-# Short options
-pytest -J some/path/report.json -P my_project -E my_ecu -X 0.0.1
-
-# No JSON report (unless specified in pytest.ini)
+# Run tests normally (no report generated)
 pytest
 ```
+

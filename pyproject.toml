@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "test_guide_pytest_json"
-version = "0.0.8"
-dependencies = []
+version = "0.0.9"
+dependencies = ["python-dotenv>=1.0.1"]
 authors = [{name="Tim Copeland"}]
 description='A pytest plugin to generate JSON reports, with ATX support.'
 readme = "README.md"
