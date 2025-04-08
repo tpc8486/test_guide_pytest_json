@@ -7,7 +7,7 @@ def pytest_addoption(parser):
     """Add command-line and ini options for JSON reporting and custom project details."""
     group = parser.getgroup("terminal reporting")
     group.addoption(
-        "--json",
+        "--json", "-j",  # Short option -j for --json
         nargs="?",  # Allow optional argument
         dest="json_path",
         const="",  # Default to empty string if no value is provided
@@ -17,17 +17,17 @@ def pytest_addoption(parser):
 
     # Add options for project details
     group.addoption(
-        "--project-name",
+        "--project-name", "-p",  # Short option -p for --project-name
         required=True,
         help="The name of the project"
     )
     group.addoption(
-        "--ecu-name",
+        "--ecu-name", "-e",  # Short option -e for --ecu-name
         required=True,
         help="The name of the ECU"
     )
     group.addoption(
-        "--ecu-version",
+        "--ecu-version", "-v",  # Short option -v for --ecu-version
         required=True,
         help="The version of the ECU"
     )
